@@ -168,7 +168,7 @@ This is a powerful result: by pre-training a **\~200x** larger model on abundant
 
 ## Interpretable Biological Simulators
 
-Deep learning models trained on time-series data from dynamical systems, like the Lorenz attractor, have been shown to learn the underlying governing equations in their weights. By enforcing sparsity during training, for example, with the Sparse Identification of Nonlineaer Dynamics algorithm (SINDy), it's possible to recover the exact polynomial terms of the original ordinary differential equations (ODEs):
+Deep learning models trained on time-series data from dynamical systems, like the Lorenz attractor, have been shown to learn the underlying governing equations in their weights. By enforcing sparsity during training, for example, with the [Sparse Identification of Nonlineaer Dynamics algorithm (SINDy)](https://www.pnas.org/doi/10.1073/pnas.1517384113), it's possible to recover the exact polynomial terms of the original ordinary differential equations (ODEs):
 
 > In SINDY, they initalize a dictionary \$\Theta(x)\$ whose columns are candidate nonlinear basis functions \$(1, x, y, z, x^2, xy, \dots)\$. They then solve the regression \$\dot{x} = \Theta(x) \Xi\$ with an \$\ell\_1\$ penalty on \$\Xi\$. The sparsity constraint drives most columns of \$\Xi\$ to exactly zero... For simulated Lorenz data... the algorithm keeps just six columns—corresponding to the terms \$(y-x)\$, \$x\$, \$xz\$, \$xy\$, and \$z\$—and the non-zero coefficients reproduce the canonical ODEs:
 >
@@ -176,6 +176,6 @@ Deep learning models trained on time-series data from dynamical systems, like th
 > \$\dot{y} = 28x - xz - y\$
 > \$\dot{z} = xy - \frac{8}{3}z\$
 
-Single-cell foundation models are likely doing something analogous in a much higher-dimensional, non-polynomial function space. The training process, guided by the loss function and a strong optimizer, prunes away parameter configurations that don't improve the conditional likelihood of real transcriptomes. What remains is an entangled, superpositioned library of "active columns" that encode the true, non-linear governing equations of the cell dynamic.
+Single-cell foundation models are likely doing something analogous in a much higher-dimensional, non-polynomial function space. The training process, guided by the loss function and a strong optimizer, prunes away parameter configurations that don't improve the conditional likelihood of real transcriptomes. What remains is an entangled, [superpositioned](https://www.anthropic.com/research/toy-models-of-superposition) library of "active columns" that encode the true, non-linear governing equations of the cell dynamic.
 
 There's a lot of alpha in developing methods, whether through mechanistic interpretability or SINDy-style sparsity constraints, to disentangle these learned features and extract the generalizable "governing equations" of the cell.
