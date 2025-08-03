@@ -148,6 +148,8 @@ auroc = roc_auc_score(y_true, p_xor)
 
 One of the most exciting frontiers is transfer learning: between organisms, across cell types, or from lab-grown cells to *in-vivo* samples. Can pre-training on petabytes of yeast or fly data help understand human biology? [Scaling Laws for Transfer](https://arxiv.org/abs/2102.01293) gives empirically fittable power laws that quantify how valuable transfer learning is.
 
+![transfer_law](assets/transfer_law.png)
+
 The effective data transferred (\$D\_t\$) from a pre-training source to a fine-tuning target can be modeled as a function of the fine-tuning data size (\$D\_f\$) and the model/compute size (\$N\$):
 
 \$D\_t = k \cdot (D\_f)^\alpha \cdot N^\beta\$
