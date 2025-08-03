@@ -176,4 +176,4 @@ Deep learning models trained on time-series data from dynamical systems, like th
 
 Single-cell foundation models are likely doing something analogous in a much higher-dimensional, non-polynomial function space. The training process, guided by the loss function and a strong optimizer, prunes away parameter configurations that don't improve the conditional likelihood of real transcriptomes. What remains is an entangled, superpositioned library of "active columns" that encode the true, non-linear gene regulatory network.
 
-The next great challenge is to develop methods—whether through mechanistic interpretability or SINDy-style sparsity constraints—to disentangle these learned features and extract the generalizable "governing equations" of the cell.
+There's a lot of alpha in developing methods, whether through mechanistic interpretability or SINDy-style sparsity constraints, to disentangle these learned features and extract the generalizable "governing equations" of the cell.
