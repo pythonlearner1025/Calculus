@@ -172,6 +172,8 @@ This is a powerful result: by pre-training a **\~200x** larger model on abundant
 
 Deep learning models trained on time-series data from dynamical systems, like the Lorenz attractor, have been shown to learn the underlying governing equations in their weights. By enforcing sparsity during training, for example, with the [Sparse Identification of Nonlineaer Dynamics algorithm (SINDy)](https://www.pnas.org/doi/10.1073/pnas.1517384113), it's possible to recover the exact polynomial terms of the original ordinary differential equations (ODEs):
 
+![The SINDY algorithm on Lorenz system](assets/sindy.webp)
+
 > In SINDY, they initalize a dictionary \$\Theta(x)\$ whose columns are candidate nonlinear basis functions \$(1, x, y, z, x^2, xy, \dots)\$. They then solve the regression \$\dot{x} = \Theta(x) \Xi\$ with an \$\ell\_1\$ penalty on \$\Xi\$. The sparsity constraint drives most columns of \$\Xi\$ to exactly zero... For simulated Lorenz data... the algorithm keeps just six columns—corresponding to the terms \$(y-x)\$, \$x\$, \$xz\$, \$xy\$, and \$z\$—and the non-zero coefficients reproduce the canonical ODEs:
 >
 > \$\dot{x} = 10(y-x)\$
