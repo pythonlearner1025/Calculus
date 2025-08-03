@@ -144,7 +144,7 @@ auroc = roc_auc_score(y_true, p_xor)
 
 ## Scaling Laws for Biological Transfer Learning
 
-One of the most exciting frontiers is transfer learning: between organisms, across cell types, or from lab-grown cells to *in-vivo* samples. Can pre-training on petabytes of yeast or fly data help understand human biology? Scaling Laws for Transfer gives empirically fittable power laws that quantify how valuable transfer learning is.
+One of the most exciting frontiers is transfer learning: between organisms, across cell types, or from lab-grown cells to *in-vivo* samples. Can pre-training on petabytes of yeast or fly data help understand human biology? [Scaling Laws for Transfer](https://arxiv.org/abs/2102.01293) gives empirically fittable power laws that quantify how valuable transfer learning is.
 
 The effective data transferred (\$D\_t\$) from a pre-training source to a fine-tuning target can be modeled as a function of the fine-tuning data size (\$D\_f\$) and the model/compute size (\$N\$):
 
