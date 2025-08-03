@@ -4,7 +4,7 @@ Single-cell transcriptomics gives a snapshot of the \~\$20,000-gene expression s
 
 Linear methods like Principal Component Analysis (PCA) are great for finding the major axes of variation in this data, but they fall short because biology is fundamentally non-linear. To model complex phenomena like gene XOR gates or the effects of perturbations, I need models that can learn the true, non-linear probability distribution \$p(\text{transcriptome})\$ from which all observed cell states are sampled.
 
-Enter foundation models. Architectures like transformers, with their non-linear activation functions, can learn the complex, high-order dependencies between genes. Diffusion models are a prime example, as their training objective is to learn the score function, \$\nabla\_x \log p(x)\$, which is the gradient of the log-probability of the data. This allows them to capture the underlying structure of the biological manifold in detail.
+What is commonly referred to as "deep learning" models, with large hidden states and non-linear activation functions, can learn the complex, non-linear dependencies between genes. Diffusion models are literally trained to learn the score function, \$\nabla\_x \log p(x)\$, which is the gradient of the log-probability of the data. This allows them to capture the underlying structure of the biological manifold in detail.
 
 ---
 
@@ -12,19 +12,19 @@ Enter foundation models. Architectures like transformers, with their non-linear 
 
 | Capability                  | Why PCA Fails                                                                                                                                                     | How Foundation Models Succeed                                                                                                                        |
 | :-------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Non-linear Dependencies** | PCA is a linear method, assuming additive or independent effects. It can't capture XOR-type interactions where a gene's effect depends on the absence of another. | A diffusion model learns the score of the true data distribution, capturing arbitrary, non-linear dependencies.                                      |
+| **Non-linear Dependencies** | PCA is a linear method, assuming additive or independent effects. It can't capture XOR-type interactions where a gene's effect depends on the absence of another. | A diffusion model learns the score of the true data distribution, capturing arbitrary effects.                                      |
 | **Conditional Generation**  | PCA has no native mechanism for conditional generation, like predicting the effect of a drug perturbation.                                                        | Models can be explicitly trained to learn the conditional distribution $`p(\text{masked\_gene} \mid \text{visible\_genes}, \text{perturbation})`$.      |
 | **Long-range Dependencies** | While its latent components (PCs) are global, they are dense linear combinations of all genes.                                                                    | The attention mechanism allows the model to learn sparse, context-dependent interactions between any two genes, no matter how distant in the genome. |
 
 ---
 
-## The Data: A Petabyte-Scale Glimpse into the Cell
+## Petabyte Scale Slices of the Cell
 
-The scale of available data is staggering. The Sequence Read Archive (SRA) holds over 47 petabytes of raw sequencing data, and its single-cell RNA-seq (scRNA-seq) component is growing exponentially. A key resource is **scBaseCount**, a dataset from the Arc Institute containing nearly 300 million transcriptomes curated from the SRA.
+The scale of available single-cell data is staggering. The Sequence Read Archive (SRA) holds over 47 petabytes of raw sequencing data, and its single-cell RNA-seq (scRNA-seq) component is growing exponentially. A key resource is **scBaseCount**, a dataset from the Arc Institute containing nearly 300 million transcriptomes curated from the SRA.
 
-This dataset primarily covers experiments using 10x Genomics technology, which are highly valuable for transcriptomics. Based on a starting point of 330 million 10x-labeled cells in early 2025 and a conservative 20% year-on-year growth, I project the public archive will hit **one billion cells by mid-2031**. This timeline could accelerate to 2029–2030 as more data types are processed and sequencing throughput increases.
+This dataset primarily covers experiments using 10x Genomics technology, which are highly valuable for transcriptomics. Based on a starting point of 330 million 10x-labeled cells in early 2025 and a conservative 20% year-on-year growth, the public archive will hit **one billion cells by mid-2031**. This timeline could accelerate to 2029–2030 as more data types are processed and sequencing throughput increases.
 
-The data is heavily skewed towards human and mouse cells, mostly from lab-grown embryonic or differentiated cell lines. This creates a significant distribution shift from *in vivo* cells, which are influenced by complex cell-cell signaling and homeostatic rhythms not present in a culture dish.
+Its worth noting that the data is heavily skewed towards human and mouse cells, mostly from lab-grown embryonic or differentiated cell lines. This creates a significant distribution shift from *in vivo* cells, which are influenced by complex cell-cell signaling and homeostatic rhythms not present in a culture dish.
 
 ### Total Cells per Organism in scBaseCount (Top 10)
 
@@ -43,9 +43,9 @@ The data is heavily skewed towards human and mouse cells, mostly from lab-grown 
 
 ---
 
-## Private Evaluation: Putting the Model to the Test
+## Private Evaluation
 
-I ran two private evaluations on a diffusion-transformer model trained on human brain scRNA-seq data to test its ability to capture known biological relationships.
+I ran two private evaluations on a 40M parameter diffusion-transformer model trained on human brain scRNA-seq data to test its ability to capture known biological relationships.
 
 ### 1. Linear Covariance Evaluation
 
@@ -86,16 +86,18 @@ score = np.mean([
 
 | Aspect                       | Real Data (\$\bar{\rho}\$) | Model (\$\bar{\rho}\$) | Sign Match |
 | :--------------------------- | :------------------------: | :--------------------: | :--------: |
-| Synaptic Genes Together      |            +0.30           |          +0.63         |      ✔     |
-| Mitochondrial Genes Together |            +0.00           |          +0.56         |      ✘     |
-| Synaptic vs. Mitochondrial   |            +0.26           |          +0.62         |      ✔     |
+| Synaptic Genes Together      |            +0.30           |          +0.63         |      O     |
+| Mitochondrial Genes Together |            +0.00           |          +0.56         |      x     |
+| Synaptic vs. Mitochondrial   |            +0.26           |          +0.62         |      O     |
 | **Final Sign-Match Score**   |                            |                        |  **0.67**  |
 
 ### 2. Non-Linear XOR Evaluation
 
-**Goal:** Can the model learn a non-linear XOR relationship? In the brain, a cell is either a neuron (expresses `RBFOX3`, not `GFAP`) or an astrocyte (expresses `GFAP`, not `RBFOX3`). A cell expressing both is not in the brain (and therefore can't arise in the true label since we restrict to brain cells only), while a cell expressing neither is biologically implausible (there may be some excpetion cases to this which I'm not aware of).
+**Goal:** Can the model learn a non-linear XOR relationship? In the brain, a cell is either a neuron (expresses `RBFOX3`, not `GFAP`) or an astrocyte (expresses `GFAP`, not `RBFOX3`). A cell expressing both or neither is not in the brain (and therefore can't arise in the true label since we restrict to brain cells only). 
 
 **Method:** I binarized the expression of `RBFOX3` and `GFAP` to create a ground-truth XOR label. I then masked these two genes and tasked the model with predicting their state, from which I calculated a predicted XOR probability.
+
+**Prediction:** Since `RBFOX3` and `GFAP` are masked, the model must infer its expression state conditioned on the background expression of all other genes. A successful model would learn to identify a non-linear mapping between neuron, astrocyte, and other cell types, and the XOR activation pattern of the two genes.  
 
 ```python
 # Core logic of eval_xor.py
@@ -142,7 +144,7 @@ auroc = roc_auc_score(y_true, p_xor)
 
 ## Scaling Laws for Biological Transfer Learning
 
-One of the most exciting frontiers is transfer learning: between organisms, across cell types, or from lab-grown cells to *in-vivo* samples. Can pre-training on petabytes of yeast or fly data help me understand human biology? Scaling laws give me a framework to reason about this.
+One of the most exciting frontiers is transfer learning: between organisms, across cell types, or from lab-grown cells to *in-vivo* samples. Can pre-training on petabytes of yeast or fly data help understand human biology? Scaling Laws for Transfer gives empirically fittable power laws that quantify how valuable transfer learning is.
 
 The effective data transferred (\$D\_t\$) from a pre-training source to a fine-tuning target can be modeled as a function of the fine-tuning data size (\$D\_f\$) and the model/compute size (\$N\$):
 
