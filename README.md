@@ -1,7 +1,3 @@
-Here is the revised technical blog post.
-
------
-
 # Single-Cell Foundation Models: Learning the Orchestra of the Cell
 
 Single-cell transcriptomics gives us a snapshot of the \~20,000-gene expression state of a cell. While the number of possible transcriptomes is astronomically high (in a binary on/off model, it's `$2^{20,000}$`), the space of *biologically plausible* transcriptomes is a tiny, intricately structured manifold. This manifold is shaped by the physical and gene-regulatory laws governing the cell.
