@@ -93,7 +93,7 @@ score = np.mean([
 
 ### 2. Non-Linear XOR Evaluation
 
-**Goal:** Can the model learn a non-linear XOR relationship? In the brain, a cell is either a neuron (expresses `RBFOX3`, not `GFAP`) or an astrocyte (expresses `GFAP`, not `RBFOX3`). A cell expressing both or neither is biologically implausible.
+**Goal:** Can the model learn a non-linear XOR relationship? In the brain, a cell is either a neuron (expresses `RBFOX3`, not `GFAP`) or an astrocyte (expresses `GFAP`, not `RBFOX3`). A cell expressing both is not in the brain (and therefore can't arise in the true label since we restrict to brain cells only), while a cell expressing neither is biologically implausible (there may be some excpetion cases to this which I'm not aware of).
 
 **Method:** I binarized the expression of `RBFOX3` and `GFAP` to create a ground-truth XOR label. I then masked these two genes and tasked the model with predicting their state, from which I calculated a predicted XOR probability.
 
