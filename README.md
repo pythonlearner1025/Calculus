@@ -1,6 +1,6 @@
 # Single-Cell Foundation Models: Learning the Orchestra of the Cell
 
-Single-cell transcriptomics gives us a snapshot of the \~20,000-gene expression state of a cell. While the number of possible transcriptomes is astronomically high (in a binary on/off model, it's `$2^{20,000}$`), the space of *biologically plausible* transcriptomes is a tiny, intricately structured manifold. This manifold is shaped by the physical and gene-regulatory laws governing the cell.
+Single-cell transcriptomics gives us a snapshot of the \~20,000-gene expression state of a cell. While the number of possible transcriptomes is astronomically high (in a binary on/off model, it's `$\2^{20,000}\$`), the space of *biologically plausible* transcriptomes is a tiny, intricately structured manifold. This manifold is shaped by the physical and gene-regulatory laws governing the cell.
 
 Linear methods like Principal Component Analysis (PCA) are great for finding the major axes of variation in this data, but they fall short because biology is fundamentally non-linear. To model complex phenomena like gene XOR gates or the effects of perturbations, we need models that can learn the true, non-linear probability distribution `$p(\text{transcriptome})$` from which all observed cell states are sampled.
 
