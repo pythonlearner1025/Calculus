@@ -2,9 +2,9 @@
 
 Single-cell transcriptomics gives a snapshot of the ~20,000-gene expression state of a cell. While the number of possible transcriptomes is astronomically high (in a binary on/off model, it's \$2^{20,000}\$), the space of *biologically plausible* transcriptomes is a tiny, intricately structured manifold. This manifold is shaped by the physical and gene-regulatory laws governing the cell.
 
-Linear methods like Principal Component Analysis (PCA) are great for finding the major axes of variation in this data, but they fall short because biology is fundamentally non-linear. To model complex phenomena like gene XOR gates or the effects of perturbations, you need models that can learn the true, non-linear probability distribution \$p(\text{transcriptome})\$ from which all observed cell states are sampled.
+Linear methods like Principal Component Analysis (PCA) are great for finding the major axes of variation in this data, but they fall short because biology is fundamentally non-linear. To model complex phenomena like [mutually exclusive gene expression patterns](https://pubmed.ncbi.nlm.nih.gov/29497365/) or the effects of [perturbations](https://pmc.ncbi.nlm.nih.gov/articles/PMC10025447/), you need models that can learn the true, non-linear probability distribution \$p(\text{transcriptome})\$ from which all observed cell states are sampled.
 
-What is commonly referred to as "deep learning" models, with many hidden neurons and non-linear activation functions, can learn arbitrary dependencies between genes. Diffusion models are literally trained to learn the score function, \$\nabla\_x \log p(x)\$, which is the gradient of the log-probability of the data. This allows them to capture the underlying structure of the biological manifold.
+What is commonly referred to as "deep learning" models, with many hidden neurons and non-linear activation functions (ReLU/GeLU), can learn arbitrary dependencies between genes. Diffusion models are literally trained to learn the score function, \$\nabla\_x \log p(x)\$, which is the gradient of the log-probability of the data. This allows them to capture the underlying structure of the biological manifold.
 
 ---
 
@@ -20,7 +20,7 @@ What is commonly referred to as "deep learning" models, with many hidden neurons
 
 ## Petabyte Scale Slices of the Cell
 
-The scale of available single-cell data is staggering. The Sequence Read Archive (SRA) holds over 47 petabytes of raw sequencing data, and its single-cell RNA-seq (scRNA-seq) component is growing exponentially. A key resource is **scBaseCount**, a dataset from the Arc Institute containing nearly 300 million transcriptomes curated from the SRA.
+The scale of available single-cell data is staggering. The Sequence Read Archive (SRA) holds over 47 petabytes of raw sequencing data, and its single-cell RNA-seq (scRNA-seq) component is growing exponentially. A key resource is [scBaseCount](https://github.com/ArcInstitute/arc-virtual-cell-atlas/tree/main/scBaseCount), a dataset from the Arc Institute containing nearly 300 million transcriptomes curated from the SRA.
 
 This dataset primarily covers experiments using 10x Genomics technology, which are highly valuable for transcriptomics. Based on a starting point of 330 million 10x-labeled cells in early 2025 and a conservative 20% year-on-year growth, the public archive will hit **one billion cells by mid-2031**. This timeline could accelerate to 2029–2030 as more data types are processed and sequencing throughput increases.
 
@@ -45,7 +45,9 @@ Its worth noting that the data is heavily skewed towards human and mouse cells, 
 
 ## Private Evaluation
 
-I ran two private evaluations on a 40M parameter diffusion-transformer model trained on 3 epochs of 500,000 human brain scRNA-seq data.    
+I ran two private evaluations on a 40M parameter discrete diffusion-transformer model trained on 3 epochs of 500,000 human brain scRNA-seq data.    
+
+![Loss plot of the model](assets/40m_avg_loss.png)
 
 ### 1. Linear Covariance Evaluation
 
