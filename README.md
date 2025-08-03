@@ -2,9 +2,9 @@
 
 Single-cell transcriptomics gives a snapshot of the \~\$20,000-gene expression state of a cell. While the number of possible transcriptomes is astronomically high (in a binary on/off model, it's \$2^{20,000}\$), the space of *biologically plausible* transcriptomes is a tiny, intricately structured manifold. This manifold is shaped by the physical and gene-regulatory laws governing the cell.
 
-Linear methods like Principal Component Analysis (PCA) are great for finding the major axes of variation in this data, but they fall short because biology is fundamentally non-linear. To model complex phenomena like gene XOR gates or the effects of perturbations, I need models that can learn the true, non-linear probability distribution \$p(\text{transcriptome})\$ from which all observed cell states are sampled.
+Linear methods like Principal Component Analysis (PCA) are great for finding the major axes of variation in this data, but they fall short because biology is fundamentally non-linear. To model complex phenomena like gene XOR gates or the effects of perturbations, you need models that can learn the true, non-linear probability distribution \$p(\text{transcriptome})\$ from which all observed cell states are sampled.
 
-What is commonly referred to as "deep learning" models, with large hidden states and non-linear activation functions, can learn the complex, non-linear dependencies between genes. Diffusion models are literally trained to learn the score function, \$\nabla\_x \log p(x)\$, which is the gradient of the log-probability of the data. This allows them to capture the underlying structure of the biological manifold in detail.
+What is commonly referred to as "deep learning" models, with many hidden neurons and non-linear activation functions, can learn arbitrary dependencies between genes. Diffusion models are literally trained to learn the score function, \$\nabla\_x \log p(x)\$, which is the gradient of the log-probability of the data. This allows them to capture the underlying structure of the biological manifold.
 
 ---
 
@@ -150,7 +150,7 @@ The effective data transferred (\$D\_t\$) from a pre-training source to a fine-t
 
 \$D\_t = k \cdot (D\_f)^\alpha \cdot N^\beta\$
 
-Here, \$\alpha\$ measures the similarity between the source and target data, and \$\beta\$ represents how effectively more compute translates to better performance. This formulation allows me to trade data for compute. For example, to find the equivalent data multiplier (\$\text{data}\_c\$) gained from a certain model size multiplier (\$\text{model}\_c\$), I can set the contributions to be equal:
+Here, \$\alpha\$ measures the similarity between the source and target data, and \$\beta\$ represents how effectively more compute translates to better performance. This formulation allows trading data for compute. For example, to find the equivalent data multiplier (\$\text{data}\_c\$) gained from a certain model size multiplier (\$\text{model}\_c\$), set the contributions to be equal:
 
 \$(\text{data}\_c \cdot D\_f)^\alpha \cdot N^\beta = (D\_f)^\alpha \cdot (\text{model}\_c \cdot N)^\beta\$
 
@@ -162,20 +162,20 @@ Assuming \$\beta\$ is relatively constant from similar empirical studies (making
 
 \$\text{model}\_c = (\text{data}\_c)^\alpha = (10^6)^{0.38} = 10^{2.28} \approx 191\$
 
-This is a powerful result: by pre-training a **\~200x** larger model on abundant (but less relevant) data, I might achieve the same performance as if I had collected a million times more rare (but highly relevant) data.
+This is a powerful result: by pre-training a **\~200x** larger model on abundant (but less relevant) data and then fine-tuning it on the ecologically valid data, I might achieve the same performance as if I had collected a million times more ecologically valid data.
 
 ---
 
 ## Interpretable Biological Simulators
 
-Deep learning models trained on time-series data from dynamical systems, like the Lorenz attractor, have been shown to learn the underlying governing equations in their weights. By enforcing sparsity during training (e.g., with the SINDy algorithm), it's possible to recover the exact polynomial terms of the original ordinary differential equations (ODEs):
+Deep learning models trained on time-series data from dynamical systems, like the Lorenz attractor, have been shown to learn the underlying governing equations in their weights. By enforcing sparsity during training, for example, with the Sparse Identification of Nonlineaer Dynamics algorithm (SINDy), it's possible to recover the exact polynomial terms of the original ordinary differential equations (ODEs):
 
-> I build a dictionary \$\Theta(x)\$ whose columns are candidate nonlinear basis functions \$(1, x, y, z, x^2, xy, \dots)\$. I then solve the regression \$\dot{x} = \Theta(x) \Xi\$ with an \$\ell\_1\$ penalty on \$\Xi\$. The sparsity constraint drives most columns of \$\Xi\$ to exactly zero... For simulated Lorenz data... the algorithm keeps just six columns—corresponding to the terms \$(y-x)\$, \$x\$, \$xz\$, \$xy\$, and \$z\$—and the non-zero coefficients reproduce the canonical ODEs:
+> In SINDY, they initalize a dictionary \$\Theta(x)\$ whose columns are candidate nonlinear basis functions \$(1, x, y, z, x^2, xy, \dots)\$. They then solve the regression \$\dot{x} = \Theta(x) \Xi\$ with an \$\ell\_1\$ penalty on \$\Xi\$. The sparsity constraint drives most columns of \$\Xi\$ to exactly zero... For simulated Lorenz data... the algorithm keeps just six columns—corresponding to the terms \$(y-x)\$, \$x\$, \$xz\$, \$xy\$, and \$z\$—and the non-zero coefficients reproduce the canonical ODEs:
 >
 > \$\dot{x} = 10(y-x)\$
 > \$\dot{y} = 28x - xz - y\$
 > \$\dot{z} = xy - \frac{8}{3}z\$
 
-Single-cell foundation models are likely doing something analogous in a much higher-dimensional, non-polynomial function space. The training process, guided by the loss function and a strong optimizer, prunes away parameter configurations that don't improve the conditional likelihood of real transcriptomes. What remains is an entangled, superpositioned library of "active columns" that encode the true, non-linear gene regulatory network.
+Single-cell foundation models are likely doing something analogous in a much higher-dimensional, non-polynomial function space. The training process, guided by the loss function and a strong optimizer, prunes away parameter configurations that don't improve the conditional likelihood of real transcriptomes. What remains is an entangled, superpositioned library of "active columns" that encode the true, non-linear governing equations of the cell dynamic.
 
 There's a lot of alpha in developing methods, whether through mechanistic interpretability or SINDy-style sparsity constraints, to disentangle these learned features and extract the generalizable "governing equations" of the cell.
