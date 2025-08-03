@@ -1,3 +1,7 @@
+Here is the revised technical blog post.
+
+-----
+
 # Single-Cell Foundation Models: Learning the Orchestra of the Cell
 
 Single-cell transcriptomics gives us a snapshot of the \~20,000-gene expression state of a cell. While the number of possible transcriptomes is astronomically high (in a binary on/off model, it's `$2^{20,000}$`), the space of *biologically plausible* transcriptomes is a tiny, intricately structured manifold. This manifold is shaped by the physical and gene-regulatory laws governing the cell.
@@ -26,7 +30,7 @@ This dataset primarily covers experiments using 10x Genomics technology, which a
 
 The data is heavily skewed towards human and mouse cells, mostly from lab-grown embryonic or differentiated cell lines. This creates a significant distribution shift from *in vivo* cells, which are influenced by complex cell-cell signaling and homeostatic rhythms not present in a culture dish.
 
-#### 🔬 Total Cells per Organism in scBaseCount (Top 10)
+#### Total Cells per Organism in scBaseCount (Top 10)
 
 | Organism | Total Cells (Millions) |
 | :--- | :--- |
@@ -86,9 +90,9 @@ score = np.mean([
 
 | Aspect | Real Data (`$\bar{\rho}$`) | Model (`$\bar{\rho}$`) | Sign Match |
 | :--- | :---: | :---: | :---: |
-| Synaptic Genes Together | +0.30 | +0.63 | ✔ |
-| Mitochondrial Genes Together | +0.00 | +0.56 | ✘ |
-| Synaptic vs. Mitochondrial | +0.26 | +0.62 | ✔ |
+| Synaptic Genes Together | +0.30 | +0.63 | Match |
+| Mitochondrial Genes Together | +0.00 | +0.56 | Mismatch |
+| Synaptic vs. Mitochondrial | +0.26 | +0.62 | Match |
 | **Final Sign-Match Score** | | | **0.67** |
 
 ### 2\. Non-Linear XOR Evaluation
@@ -127,16 +131,15 @@ bal_acc = balanced_accuracy_score(y_true, y_pred)
 auroc = roc_auc_score(y_true, p_xor)
 ```
 
-**Results:** The model performed exceptionally well, achieving a balanced accuracy of 0.93 and an AUROC of 0.98, demonstrating its ability to capture complex, non-linear biological rules.
+**Results:** The model failed this task completely. By predicting the "off" state for all cells, it ignored the XOR relationship entirely. The high number of true negatives makes metrics like raw accuracy misleading; balanced accuracy reveals the failure. The model was unable to learn this complex, non-linear biological rule from the data.
 
-  * **N cells evaluated:** 50,000
-  * **Balanced accuracy:** 0.931
-  * **AUROC:** 0.982
+  * **Balanced accuracy:** 0.500
+  * **AUROC:** 0.500
   * **Confusion Matrix:**
-    ```
-    [[11306  1028]
-     [ 1581 36085]]
-    ```
+    | | Predict Value = 0 | Predict Value = 1 |
+    | :--- | :--- | :--- |
+    | **Real Value = 0** | 28458 (True Negative) | 0 (False Positive) |
+    | **Real Value = 1** | 1542 (False Negative) | 0 (True Positive) |
 
 -----
 
@@ -144,7 +147,7 @@ auroc = roc_auc_score(y_true, p_xor)
 
 One of the most exciting frontiers is transfer learning: between organisms, across cell types, or from lab-grown cells to *in-vivo* samples. Can pre-training on petabytes of yeast or fly data help us understand human biology? Scaling laws give us a framework to reason about this.
 
-The effective data transferred (`$D_t$`) from a pre-training source to a fine-tuning target can be modeled as a function of the fine-tuning data size (`$D_f$`) and the model/compute size (`$N`):
+The effective data transferred (`$D_t$`) from a pre-training source to a fine-tuning target can be modeled as a function of the fine-tuning data size (`$D_f$`) and the model/compute size (`$N`$):
 
 $$D_t = k \cdot (D_f)^\alpha \cdot N^\beta$$
 
@@ -169,9 +172,7 @@ Deep learning models trained on time-series data from dynamical systems, like th
 
 > We build a dictionary `$\Theta(x)$` whose columns are candidate nonlinear basis functions `$(1, x, y, z, x^2, xy, \dots)$`. We then solve the regression `$\dot{x} = \Theta(x) \Xi$` with an `$\ell_1$` penalty on `$\Xi$`. The sparsity constraint drives most columns of `$\Xi$` to exactly zero... For simulated Lorenz data... the algorithm keeps just six columns—corresponding to the terms `$(y-x)$`, `$x$`, `$xz$`, `$xy$` and `$z$`—and the non-zero coefficients reproduce the canonical ODEs:
 >
-> $$\dot{x} = 10(y-x)$$
-> $$\dot{y} = 28x - xz - y$$
-> $$\dot{z} = xy - \frac{8}{3}z$$
+> $$\dot{x} = 10(y-x)$$\>$$\dot{y} = 28x - xz - y$$\>$$\dot{z} = xy - \frac{8}{3}z$$
 
 Single-cell foundation models are likely doing something analogous in a much higher-dimensional, non-polynomial function space. The training process, guided by the loss function and a strong optimizer, prunes away parameter configurations that don't improve the conditional likelihood of real transcriptomes. What remains is an entangled, superpositioned library of "active columns" that encode the true, non-linear gene regulatory network.
 
