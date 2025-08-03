@@ -45,7 +45,7 @@ Its worth noting that the data is heavily skewed towards human and mouse cells, 
 
 ## Private Evaluation
 
-I ran two private evaluations on a 40M parameter diffusion-transformer model trained on human brain scRNA-seq data to test its ability to capture known biological relationships.
+I ran two private evaluations on a 40M parameter diffusion-transformer model trained on 3 epochs of 500,000 human brain scRNA-seq data.    
 
 ### 1. Linear Covariance Evaluation
 
